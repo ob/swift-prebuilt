@@ -32,7 +32,7 @@ do
     TB=${package}-${OS}-${CPU}.tar.gz
     tar -c $V -f - \
         -C $BUILD --exclude '*.o' ${package}-${OS}-${CPU} \
-    | pigz > $RELEASE/$TB
+    | pigz -9 > $RELEASE/$TB
     TARBALLS+=( $TB )
 done
 
@@ -55,7 +55,7 @@ do
 done
 
 TB=tools-${OS}-${CPU}.tar.gz
-tar $V -c -f - tools | pigz > $RELEASE/$TB
+tar $V -c -f - tools | pigz -9 > $RELEASE/$TB
 TARBALLS+=( $TB )
 
 # Compute checksums
