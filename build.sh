@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-SWIFT_SOURCE=swift-source
+SWIFT_SOURCE=/tmp/swift-source
 
 cd $SWIFT_SOURCE
 # If you change these flags, you will need to change the BUILD

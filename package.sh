@@ -4,7 +4,7 @@ set -euo pipefail
 
 V=-v
 
-SWIFT_SOURCE=swift-source
+SWIFT_SOURCE=/tmp/swift-source
 RELEASE=release
 mkdir -p $RELEASE
 
