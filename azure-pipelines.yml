@@ -6,6 +6,12 @@
 trigger:
 - master
 
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - master
+
 jobs:
 - job: macOS
   timeoutInMinutes: 360
@@ -18,7 +24,7 @@ jobs:
     vmImage: 'macOS-10.14'
     demands: xcode
   steps:
-  - script: 'brew install ninja cmake pigz'
+  - script: 'brew install ninja cmake lrzip'
     displayName: 'Installing build dependencies'
   - script: |
       ./clone.sh
@@ -37,7 +43,7 @@ jobs:
       target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
       tagSource: 'manual' # Required when action == Create# Options: auto, manual
       tag: 'swift-5.0.1-RELEASE-$(Build.BuildNumber)'
-      assets: 'release/*.tar.gz'
+      assets: 'release/*'
       releaseNotesSource: 'file' # Optional. Options: file, input
-      releaseNotesFile: 'release/checksums.md' # Optional
+      releaseNotesFile: 'checksums.md' # Optional
 

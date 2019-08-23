@@ -26,14 +26,13 @@ PACKAGES=(
     swift
 )
 
-TARBALLS=()
 for package in ${PACKAGES[@]}
 do
-    TB=${package}-${OS}-${CPU}.tar.gz
-    tar -c $V -f - \
-        -C $BUILD --exclude '*.o' ${package}-${OS}-${CPU} \
-    | pigz -9 > $RELEASE/$TB
-    TARBALLS+=( $TB )
+    tar -c $V -f $RELEASE/${package}-${OS}-${CPU}.tar.lrzip \
+        -C $BUILD \
+        --exclude '*.o' --exclude '*.tmp' \
+        --use-compress-program lrzip \
+        ${package}-${OS}-${CPU}
 done
 
 # now do the small utilities package
@@ -54,15 +53,15 @@ do
     cp $BUILD/llvm-${OS}-${CPU}/bin/$tool $TOOLS/bin
 done
 
-TB=tools-${OS}-${CPU}.tar.gz
-tar $V -c -f - tools | pigz -9 > $RELEASE/$TB
-TARBALLS+=( $TB )
+tar $V -c -f $RELEASE/tools-${OS}-${CPU}.tar.gz -y tools
 
 # Compute checksums
 cd $RELEASE
+FILES=$(ls)
 echo '```' > checksums.md
-for tb in ${TARBALLS[@]}
+for tb in ${FILES}
 do
     shasum -a 256 $tb >> checksums.md
 done
 echo '```' >> checksums.md
+mv checksums.md ..
