@@ -18,7 +18,6 @@ case `uname -s` in
 esac
 
 CPU=$(uname -m)
-BUILD=$SWIFT_SOURCE/build/Ninja-RelWithDebInfoAssert/
 
 # create the packages
 PACKAGES=(
@@ -29,15 +28,22 @@ PACKAGES=(
 for package in ${PACKAGES[@]}
 do
     tar -c $V -f $RELEASE/${package}-${OS}-${CPU}.tar.lrzip \
-        -C $BUILD \
+        -C $SWIFT_SOURCE \
         --exclude '*.o' --exclude '*.tmp' \
         --use-compress-program lrzip \
-        ${package}-${OS}-${CPU}
+        build/Ninja-RelWithDebInfoAssert/${package}-${OS}-${CPU}
 done
+
+# Package the source tree
+tar -c $V -f $RELEASE/swift-source.tar.lrzip \
+    -C /tmp \
+    --exclude '.git' --exclude 'build' \
+    --use-compress-program lrzip \
+    swift-source
 
 # now do the small utilities package
 TOOLS=tools
-mkdir -p $TOOLS/bin
+mkdir -p $TOOLS/bin $TOOLS/lib
 
 SWIFT_TOOLS=($(cat SWIFT-TOOLS))
 CLANG_TOOLS=($(cat CLANG-TOOLS))
@@ -51,6 +57,11 @@ echo Packaging Clang Tools
 for tool in ${CLANG_TOOLS[@]}
 do
     cp $BUILD/llvm-${OS}-${CPU}/bin/$tool $TOOLS/bin
+    DEPS=$(otool -L $BUILD/llvm-${OS}-${CPU}/bin/$tool | grep @rpath | awk '{print $1}' | sed 's|@rpath/||g;')
+    for lib in $DEPS
+    do
+        cp $BUILD/llvm-${OS}-${CPU}/lib/$lib $TOOLS/lib
+    done
 done
 
 tar $V -c -f $RELEASE/tools-${OS}-${CPU}.tar.gz -y tools
