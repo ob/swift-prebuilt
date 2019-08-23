@@ -5,6 +5,7 @@ set -euo pipefail
 V=-v
 
 SWIFT_SOURCE=/tmp/swift-source
+BUILD_DIR=build/Ninja-RelWithDebInfoAssert
 RELEASE=release
 mkdir -p $RELEASE
 
@@ -31,7 +32,7 @@ do
         -C $SWIFT_SOURCE \
         --exclude '*.o' --exclude '*.tmp' \
         --use-compress-program lrzip \
-        build/Ninja-RelWithDebInfoAssert/${package}-${OS}-${CPU}
+        $BUILD_DIR/${package}-${OS}-${CPU}
 done
 
 # Package the source tree
@@ -51,16 +52,16 @@ CLANG_TOOLS=($(cat CLANG-TOOLS))
 echo Packaging Swift Tools
 for tool in ${SWIFT_TOOLS[@]}
 do
-    cp $BUILD/swift-${OS}-${CPU}/bin/$tool $TOOLS/bin
+    cp $SWIFT_SOURCE/$BUILD_DIR/swift-${OS}-${CPU}/bin/$tool $TOOLS/bin
 done
 echo Packaging Clang Tools
 for tool in ${CLANG_TOOLS[@]}
 do
-    cp $BUILD/llvm-${OS}-${CPU}/bin/$tool $TOOLS/bin
-    DEPS=$(otool -L $BUILD/llvm-${OS}-${CPU}/bin/$tool | grep @rpath | awk '{print $1}' | sed 's|@rpath/||g;')
+    cp $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/bin/$tool $TOOLS/bin
+    DEPS=$(otool -L $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/bin/$tool | grep @rpath | awk '{print $1}' | sed 's|@rpath/||g;')
     for lib in $DEPS
     do
-        cp $BUILD/llvm-${OS}-${CPU}/lib/$lib $TOOLS/lib
+        cp $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/lib/$lib $TOOLS/lib
     done
 done
 
@@ -69,10 +70,9 @@ tar $V -c -f $RELEASE/tools-${OS}-${CPU}.tar.gz -y tools
 # Compute checksums
 cd $RELEASE
 FILES=$(ls)
-echo '```' > checksums.md
+echo "## SHA256 checksums of assets" >> checksums.md
 for tb in ${FILES}
 do
-    shasum -a 256 $tb >> checksums.md
+    shasum -a 256 $tb | awk '{print "`" $2 "` `" $1 "`"}' >> checksums.md
 done
-echo '```' >> checksums.md
 mv checksums.md ..
