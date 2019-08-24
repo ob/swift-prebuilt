@@ -2,7 +2,9 @@
 
 set -euo pipefail
 
-V=-v
+set -x
+
+V=
 
 SWIFT_SOURCE=/tmp/swift-source
 BUILD_DIR=build/Ninja-RelWithDebInfoAssert
@@ -54,6 +56,10 @@ for tool in ${SWIFT_TOOLS[@]}
 do
     cp $SWIFT_SOURCE/$BUILD_DIR/swift-${OS}-${CPU}/bin/$tool $TOOLS/bin
 done
+
+# It's okay for grep to not find anything
+set +o pipefail
+
 echo Packaging Clang Tools
 for tool in ${CLANG_TOOLS[@]}
 do
