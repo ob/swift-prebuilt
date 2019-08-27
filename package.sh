@@ -57,14 +57,12 @@ do
     cp $SWIFT_SOURCE/$BUILD_DIR/swift-${OS}-${CPU}/bin/$tool $TOOLS/bin
 done
 
-# It's okay for grep to not find anything
-set +o pipefail
-
 echo Packaging Clang Tools
 for tool in ${CLANG_TOOLS[@]}
 do
     cp $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/bin/$tool $TOOLS/bin
-    DEPS=$(otool -L $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/bin/$tool | grep @rpath | awk '{print $1}' | sed 's|@rpath/||g;')
+    # It's okay for grep to not find anything
+    DEPS=$(otool -L $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/bin/$tool | (grep @rpath || true) | awk '{print $1}' | sed 's|@rpath/||g;')
     for lib in $DEPS
     do
         cp $SWIFT_SOURCE/$BUILD_DIR/llvm-${OS}-${CPU}/lib/$lib $TOOLS/lib
