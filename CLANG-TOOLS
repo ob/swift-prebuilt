@@ -1,2 +1,4 @@
 c-index-test
 FileCheck
+llvm-bcanalyzer
+llvm-dis
