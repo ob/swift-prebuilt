@@ -37,7 +37,7 @@ jobs:
     displayName: 'Packaging Swift'
   - task: GitHubRelease@0
     displayName: 'Creating Github Release'
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/release-v')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/swift-')
     inputs:
       gitHubConnection: GHRelease
       repositoryName: '$(Build.Repository.Name)'
