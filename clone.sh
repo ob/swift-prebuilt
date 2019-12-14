@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 set -euo pipefail
 
 SWIFT_VERSION=$(cat SWIFT-VERSION)
