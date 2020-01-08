@@ -8,8 +8,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Select Xcode 11.2
-        run: sudo xcode-select -s /Applications/Xcode_11.2.app
+      - name: Select Xcode 11.3
+        run: sudo xcode-select -s /Applications/Xcode_11.3.app
       - name: Install dependencies
         run: brew install ninja cmake lrzip
       - name: Cloning Swift

@@ -10,4 +10,5 @@ SWIFT_SOURCE=/tmp/swift-source
 mkdir $SWIFT_SOURCE
 cd $SWIFT_SOURCE
 git clone https://github.com/apple/swift.git
+(cd swift && git checkout "$SWIFT_VERSION")
 ./swift/utils/update-checkout --clone --tag "$SWIFT_VERSION"
