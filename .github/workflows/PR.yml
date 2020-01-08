@@ -1,0 +1,20 @@
+name: PR
+
+on: pull_request
+
+jobs:
+  build:
+    name: build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Select Xcode 11.3
+        run: sudo xcode-select -s /Applications/Xcode_11.3.app
+      - name: Install dependencies
+        run: brew install ninja cmake lrzip
+      - name: Cloning Swift
+        run: ./clone.sh
+      - name: Building Swift
+        run: ./build.sh
+      - name: Packaging Swift
+        run: ./package.sh

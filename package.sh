@@ -11,7 +11,7 @@ BUILD_DIR=build/Ninja-RelWithDebInfoAssert
 RELEASE=release
 mkdir -p $RELEASE
 
-case `uname -s` in
+case $(uname -s) in
     Darwin)
         OS=macosx
         ;;
